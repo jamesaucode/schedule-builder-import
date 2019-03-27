@@ -2,10 +2,22 @@
 const currentDateObject = new Date();
 const currentYear = currentDateObject.getFullYear().toString();
 const defaultTimeZone = 'America/Los_Angeles';
-const monthDict = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "05", "May": "05", "Jun": "06", "Jul": "07", 
-	"Aug": "08", "Sep": "09", "Oct":"10", "Nov": "11", "Dec": "12"};
-const dateDict = {"M": "MO," , "T" : "TU,", "W": "WE,", "R": "TH,", "F": "FR,"};
-const dateIntDict = {"T" : 1, "W" : 2, "R": 3, "F": 4}
+const monthDict = {
+  Jan: '01',
+  Feb: '02',
+  Mar: '03',
+  Apr: '05',
+  May: '05',
+  Jun: '06',
+  Jul: '07',
+  Aug: '08',
+  Sep: '09',
+  Oct: '10',
+  Nov: '11',
+  Dec: '12',
+};
+const dateDict = {M: 'MO,', T: 'TU,', W: 'WE,', R: 'TH,', F: 'FR,'};
+const dateIntDict = {T: 1, W: 2, R: 3, F: 4};
 const getFinalExamMatches = (stripped: string) => {
   const fReg = /Final\sExam:\s(\D{3})\.\s(\D{3})\.(\d{1,2})\sat\s(\d{1,2}:\d{1,2})(am|pm)/gm;
   let match = fReg.exec(stripped);
@@ -26,7 +38,7 @@ const makeFinalExamEvent = (
   return finalExamEvent;
 };
 const findFirstFinal = (strippedArray: string[]) => {
-  let earliestFinal = "99999999999";
+  let earliestFinal = '99999999999';
   for (let i = 0; i < strippedArray.length; i++) {
     const finalExam = getFinalExamMatches(strippedArray[i]);
     const finalExamStartDate = getFinalExamDates(finalExam)[0].slice(0, 10);
@@ -37,12 +49,23 @@ const findFirstFinal = (strippedArray: string[]) => {
   }
   return earliestFinal;
 };
+const handleChange = event => {
+  const errorNode = <HTMLInputElement>document.getElementById('error');
+  let datePickNode = <HTMLInputElement>document.getElementById('datepick');
+  const re = /^\d{4}\-\d{2}\-\d{2}$/;
+  if (datePickNode.value.match(re)) {
+    errorNode.style.display = 'none';
+  } else {
+    errorNode.style.display = 'block';
+  }
+};
 const createEventObjects = () => {
   let scheduleNode = <HTMLInputElement>document.getElementById('schedule');
   // replace all new lines character to space
   let stripped = scheduleNode.value.replace(/(\r\n|\n|\r)/gm, ' ');
   // First date of spring instruction
-  let userInputDate = '2019-04-01';
+  let datePickNode = <HTMLInputElement>document.getElementById('datepick');
+  let userInputDate = datePickNode.value.toString();
   let strippedArray = stripped.split('...');
   // There will be an empty item at the end of the array, we want to pop it
   strippedArray.pop();
@@ -108,7 +131,7 @@ const getReaccurence = (untilDate: string, dates: string) => {
   }
   until += lastmonth + lastdayString;
   datesArray.forEach(date => {
-	  byday += dateDict[date]
+    byday += dateDict[date];
   });
   rrule = baseRule + until + ';' + byday;
   // Remove the last comma
@@ -122,8 +145,8 @@ const getFinalExamDates = (date: RegExpExecArray) => {
   let adjustedEndTimeInt = parseInt(date[4]) + 2;
   let adjustedStartTime = adjustedStartTimeInt.toString() + date[4].slice(-3);
   let adjustedEndTime = adjustedEndTimeInt.toString() + date[4].slice(-3);
-  formattedStartDate += "-" + monthDict[date[2]] 
-  formattedEndDate += "-" + monthDict[date[2]]
+  formattedStartDate += '-' + monthDict[date[2]];
+  formattedEndDate += '-' + monthDict[date[2]];
   formattedStartDate += '-' + date[3];
   formattedEndDate += '-' + date[3];
   // google api requires double digit hh
@@ -134,7 +157,7 @@ const getFinalExamDates = (date: RegExpExecArray) => {
       adjustedEndTimeInt += 12;
       adjustedEndTime = adjustedEndTimeInt.toString() + date[4].slice(-3);
     }
-  } 
+  }
   formattedStartDate += 'T' + adjustedStartTime + ':00';
   formattedEndDate += 'T' + adjustedEndTime + ':00';
   let finalDatesInArray = new Array();
@@ -164,7 +187,7 @@ const formatTime = (
       adjustedTime = '0' + adjustedTime;
     }
   }
-  adjustedDateInt += dateIntDict[firstDate]
+  adjustedDateInt += dateIntDict[firstDate];
   if (adjustedDateInt < 10) {
     adjustedDate = '0' + adjustedDateInt.toString();
   }

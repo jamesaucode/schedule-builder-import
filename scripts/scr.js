@@ -2,10 +2,22 @@
 var currentDateObject = new Date();
 var currentYear = currentDateObject.getFullYear().toString();
 var defaultTimeZone = 'America/Los_Angeles';
-var monthDict = { "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "05", "May": "05", "Jun": "06", "Jul": "07",
-    "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12" };
-var dateDict = { "M": "MO,", "T": "TU,", "W": "WE,", "R": "TH,", "F": "FR," };
-var dateIntDict = { "T": 1, "W": 2, "R": 3, "F": 4 };
+var monthDict = {
+    Jan: '01',
+    Feb: '02',
+    Mar: '03',
+    Apr: '05',
+    May: '05',
+    Jun: '06',
+    Jul: '07',
+    Aug: '08',
+    Sep: '09',
+    Oct: '10',
+    Nov: '11',
+    Dec: '12'
+};
+var dateDict = { M: 'MO,', T: 'TU,', W: 'WE,', R: 'TH,', F: 'FR,' };
+var dateIntDict = { T: 1, W: 2, R: 3, F: 4 };
 var getFinalExamMatches = function (stripped) {
     var fReg = /Final\sExam:\s(\D{3})\.\s(\D{3})\.(\d{1,2})\sat\s(\d{1,2}:\d{1,2})(am|pm)/gm;
     var match = fReg.exec(stripped);
@@ -23,7 +35,7 @@ var makeFinalExamEvent = function (courseName, parsedFinalExam) {
     return finalExamEvent;
 };
 var findFirstFinal = function (strippedArray) {
-    var earliestFinal = "99999999999";
+    var earliestFinal = '99999999999';
     for (var i = 0; i < strippedArray.length; i++) {
         var finalExam = getFinalExamMatches(strippedArray[i]);
         var finalExamStartDate = getFinalExamDates(finalExam)[0].slice(0, 10);
@@ -34,12 +46,24 @@ var findFirstFinal = function (strippedArray) {
     }
     return earliestFinal;
 };
+var handleChange = function (event) {
+    var errorNode = document.getElementById('error');
+    var datePickNode = document.getElementById('datepick');
+    var re = /^\d{4}\-\d{2}\-\d{2}$/;
+    if (datePickNode.value.match(re)) {
+        errorNode.style.display = 'none';
+    }
+    else {
+        errorNode.style.display = 'block';
+    }
+};
 var createEventObjects = function () {
     var scheduleNode = document.getElementById('schedule');
     // replace all new lines character to space
     var stripped = scheduleNode.value.replace(/(\r\n|\n|\r)/gm, ' ');
     // First date of spring instruction
-    var userInputDate = '2019-04-01';
+    var datePickNode = document.getElementById('datepick');
+    var userInputDate = datePickNode.value.toString();
     var strippedArray = stripped.split('...');
     // There will be an empty item at the end of the array, we want to pop it
     strippedArray.pop();
@@ -110,8 +134,8 @@ var getFinalExamDates = function (date) {
     var adjustedEndTimeInt = parseInt(date[4]) + 2;
     var adjustedStartTime = adjustedStartTimeInt.toString() + date[4].slice(-3);
     var adjustedEndTime = adjustedEndTimeInt.toString() + date[4].slice(-3);
-    formattedStartDate += "-" + monthDict[date[2]];
-    formattedEndDate += "-" + monthDict[date[2]];
+    formattedStartDate += '-' + monthDict[date[2]];
+    formattedEndDate += '-' + monthDict[date[2]];
     formattedStartDate += '-' + date[3];
     formattedEndDate += '-' + date[3];
     // google api requires double digit hh

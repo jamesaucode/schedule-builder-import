@@ -49,8 +49,11 @@
           ></textarea>
           <!-- <button onclick="createEventObjects()" class="btn">Submit</button> !-->
         </section>
+		<h2 class="heading--sub">5. Enter the first <strong>MONDAY</strong> of instruction. (yyyy-mm-dd)</h2>
+		<input class="datepick" onkeydown="handleChange(event)" onkeyup="handleChange(event)" onblur="handleChange(event)" placeholder="yyyy-mm-dd" type="text" id="datepick"/>
+		<h2 class="error" id="error">Invalid date</h2>
         <h2 class="heading--sub">
-          5. Click this button to login to your google account and authorize
+          6. Click this button to login to your google account and authorize
           this website.
           <button id="authorize_button" class="btn">
             Authorize
@@ -60,7 +63,7 @@
           </button>
         </h2>
         <h2 class="heading--sub">
-          6. Finally , click this button to import everything to your google
+          7. Finally , click this button to import everything to your google
           calendar!
           <button onclick="exportEventsToGCalendar()" class="btn">
             Export!
