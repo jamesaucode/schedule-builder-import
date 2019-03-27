@@ -102,7 +102,7 @@ const getReaccurence = (untilDate: string, dates: string) => {
   let until = 'UNTIL=';
   let lastmonth = untilDate.slice(0, 6);
   let lastday = parseInt(untilDate.slice(-2));
-  let lastdayString = '';
+  let lastdayString = lastday.toString();
   if (lastday < 10) {
     lastdayString = '0' + lastday.toString();
   }

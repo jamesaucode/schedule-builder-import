@@ -25,7 +25,7 @@ function handleClientLoad() {
 function initClient() {
   gapi.client
     .init({
-      apiKey: config.API_KEY,
+      // apiKey: config.API_KEY,
       clientId: config.CLIENT_ID,
       discoveryDocs: DISCOVERY_DOCS,
       scope: SCOPES,
@@ -54,7 +54,7 @@ function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'inline';
-    listUpcomingEvents();
+    // listUpcomingEvents();
   } else {
     authorizeButton.style.display = 'inline';
     signoutButton.style.display = 'none';

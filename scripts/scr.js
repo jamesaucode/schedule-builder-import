@@ -90,7 +90,7 @@ var getReaccurence = function (untilDate, dates) {
     var until = 'UNTIL=';
     var lastmonth = untilDate.slice(0, 6);
     var lastday = parseInt(untilDate.slice(-2));
-    var lastdayString = '';
+    var lastdayString = lastday.toString();
     if (lastday < 10) {
         lastdayString = '0' + lastday.toString();
     }
@@ -114,6 +114,7 @@ var getFinalExamDates = function (date) {
     formattedEndDate += "-" + monthDict[date[2]];
     formattedStartDate += '-' + date[3];
     formattedEndDate += '-' + date[3];
+    // google api requires double digit hh
     if (date[4].length === 4) {
         if (date[5] === 'pm') {
             adjustedStartTimeInt += 12;
