@@ -50,7 +50,7 @@ var handleChange = function (event) {
     var errorNode = document.getElementById('error');
     var datePickNode = document.getElementById('datepick');
     var re = /^\d{4}\-\d{2}\-\d{2}$/;
-    if (datePickNode.value.match(re)) {
+    if (datePickNode.value.match(re) || datePickNode.value.length === 0) {
         errorNode.style.display = 'none';
     }
     else {
