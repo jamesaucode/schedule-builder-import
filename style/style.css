@@ -3,15 +3,24 @@
 	box-sizing: border-box;
 }
 textarea {
-	padding: 10px;
+	padding:10px;
+	border-radius: 5px;
+	border: 1px solid lightgrey;
+	resize: none;
+}
+pre {
+	font-family: 'Roboto', arial, sans-serif;
+	font-size: 16px;
 }
 .btn {
+	display: inline;
 	border: none;
 	padding: 10px;
 	font-size: 16px;
 	border-radius: 3px;
 	background: #6ea2ff;
 	color: white;
+	width: 100px;
 	font-weight: 500;
 }
 .btn:hover {
@@ -21,29 +30,40 @@ textarea {
 .tutorial {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 }
 .app {
 	display: flex;
 	flex-direction: column;
 
 }
+.link {
+	text-decoration: none;
+	color: #5e9bff;
+}
+.link:hover {
+	color: #136cf9;
+}
 .wrapper {
 	display: flex;
 	flex-direction: column;
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 40px;
 }
 .heading {
 	font-family: 'Roboto', arial, sans-serif;
 	font-weight: 700;
-	font-size: 2em;
+	font-size: 2.5em;
 	text-align: center;
-	padding: 10px;
+	padding: 20px;
+	margin-bottom : 20px;
+	border-bottom : 2px solid lightgrey;
 }
 .heading--sub {
 	font-family : 'Roboto', arial, sans-serif;
 	font-weight: 400;
 	font-size: 24px;
+	padding: 10px;
+}
+.image {
+	width: 100%;
 }
