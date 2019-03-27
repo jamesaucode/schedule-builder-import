@@ -34,6 +34,8 @@ pre {
   width: 200px;
   margin: 0 auto;
 }
+#courses {
+}
 .error {
   color: red;
   font-size: 16px;
@@ -54,6 +56,18 @@ pre {
 }
 .link:hover {
   color: #136cf9;
+}
+.hide {
+	display: none;
+}
+.listItem {
+	font-family: "Roboto", arial, sans-serif;
+	padding: 10px;
+	font-weight: 700;
+	background: #091184;
+	border-radius: 3px;
+	color: #c6b600;
+	margin: 10px 0;
 }
 .wrapper {
   display: flex;

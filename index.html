@@ -46,9 +46,13 @@
             rows="20"
             cols="100"
             placeholder="Paste your schedule here!"
+			onblur="createEventObjects()"
           ></textarea>
           <!-- <button onclick="createEventObjects()" class="btn">Submit</button> !-->
         </section>
+		<button class="btn" onclick="toggleListClick()">Preivew</button>
+		<div id="courses" class="hide">
+		</div>
 		<h2 class="heading--sub">5. Enter the first <strong>MONDAY</strong> of instruction. (yyyy-mm-dd)</h2>
 		<input class="datepick" onkeydown="handleChange(event)" onkeyup="handleChange(event)" onblur="handleChange(event)" placeholder="yyyy-mm-dd" type="text" id="datepick"/>
 		<h2 class="error" id="error">Invalid date</h2>

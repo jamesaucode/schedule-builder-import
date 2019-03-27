@@ -35,7 +35,7 @@ var makeFinalExamEvent = function (courseName, parsedFinalExam) {
     return finalExamEvent;
 };
 var findFirstFinal = function (strippedArray) {
-    var earliestFinal = '99999999999';
+    var earliestFinal = "999999999";
     for (var i = 0; i < strippedArray.length; i++) {
         var finalExam = getFinalExamMatches(strippedArray[i]);
         var finalExamStartDate = getFinalExamDates(finalExam)[0].slice(0, 10);
@@ -78,7 +78,7 @@ var createEventObjects = function () {
         var finalExamEvent = makeFinalExamEvent(combinedCourseName, finalExam);
         var untilDate = earliestFinal;
         finalEventsArray.push(finalExamEvent);
-        var e = new Object();
+        var e = void 0;
         // 1 item if there's no discussion, else there is discussion.
         for (var j = 0; j < time.length; j++) {
             e = new Object();
@@ -103,8 +103,42 @@ var createEventObjects = function () {
             finalEventsArray.push(e);
         }
     }
+    appendListItem(finalEventsArray);
     console.log(finalEventsArray);
     return finalEventsArray;
+};
+var appendListItem = function (finalEventsArray) {
+    var coursesNode = document.getElementById('courses');
+    removeAllChild(coursesNode);
+    if (finalEventsArray.length > 0) {
+        for (var i = 0; i < finalEventsArray.length; i++) {
+            var listItem = document.createElement('p');
+            listItem.classList.add('listItem');
+            appendText(i + 1 + ' . ' + finalEventsArray[i].summary + '\n', listItem);
+            coursesNode.appendChild(listItem);
+        }
+    }
+    else {
+        appendText("Nothing to show!", coursesNode);
+    }
+};
+var removeAllChild = function (node) {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+};
+var appendText = function (message, parentNode) {
+    var textContent = document.createTextNode(message);
+    parentNode.appendChild(textContent);
+};
+var toggleListClick = function () {
+    var coursesNode = document.getElementById('courses');
+    if (coursesNode.classList.contains('hide')) {
+        coursesNode.classList.remove('hide');
+    }
+    else {
+        coursesNode.classList.add('hide');
+    }
 };
 var getReaccurence = function (untilDate, dates) {
     var baseRule = 'RRULE:FREQ=WEEKLY;';
@@ -134,6 +168,7 @@ var getFinalExamDates = function (date) {
     var adjustedEndTimeInt = parseInt(date[4]) + 2;
     var adjustedStartTime = adjustedStartTimeInt.toString() + date[4].slice(-3);
     var adjustedEndTime = adjustedEndTimeInt.toString() + date[4].slice(-3);
+    var finalDatesInArray = new Array();
     formattedStartDate += '-' + monthDict[date[2]];
     formattedEndDate += '-' + monthDict[date[2]];
     formattedStartDate += '-' + date[3];
@@ -149,7 +184,6 @@ var getFinalExamDates = function (date) {
     }
     formattedStartDate += 'T' + adjustedStartTime + ':00';
     formattedEndDate += 'T' + adjustedEndTime + ':00';
-    var finalDatesInArray = new Array();
     finalDatesInArray.push(formattedStartDate);
     finalDatesInArray.push(formattedEndDate);
     return finalDatesInArray;
@@ -196,11 +230,11 @@ var getTimes = function (stripped) {
     // [1] = Date e.g MWF, TR
     // [2] = Time e.g 1:10 - 2:00
     var dReg = /([MTWRF]{1,3})\s(\d{1,2}:\d{1,2})[\s\-]{3}(\d{1,2}:\d{1,2})\s(PM|AM)\s(\w+\s\d+)/gm;
-    var match = dReg.exec(stripped);
+    // let match : RegExpExecArray= dReg.exec(stripped);
+    var match;
     var datesArray = [];
-    while (match != null) {
+    while ((match = dReg.exec(stripped)) !== null) {
         datesArray.push(match);
-        match = dReg.exec(stripped);
     }
     return datesArray;
 };
