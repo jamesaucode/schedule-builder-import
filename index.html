@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link
+      rel="stylesheet"
+      href="./style/reset.css"
+      type="text/css"
+      media="screen"
+      charset="utf-8"
+    />
+    <link
+      rel="stylesheet"
+      href="./style/style.css"
+      type="text/css"
+      media="screen"
+      charset="utf-8"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500,700"
+      rel="stylesheet"
+    />
+    <title>UCD Schedule Builder Helper</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1 class="heading">Schedule Builder to Google Calendar Helper</h1>
+      <section class="tutorial" id="tutorial">
+        <h1 class="heading">How to use this ?</h1>
+        <h2 class="heading--sub">
+          1. Go to <a href="https://my.ucdavis.edu/">myucdavis</a>
+        </h2>
+        <h2 class="heading--sub">2. Login to you UC Davis account</h2>
+        <h2 class="heading--sub">
+          3. Copy this section of text under mySchedule.
+        </h2>
+        <img
+          src="./demo.png"
+          height="400"
+          width="650"
+          alt="Image of myucdavis"
+        />
+        <h2 class="heading--sub">4. Paste it under here.</h2>
+        <h2 class="heading--sub">
+          5. Click this button to login to your google account and authorize
+          this website
+        </h2>
+        <h2 class="heading--sub">
+          6. Finally , click this button to import everything to your google
+          calendar!
+        </h2>
+      </section>
+      <section class="app" id="app">
+        <textarea
+          id="schedule"
+          rows="20"
+          cols="100"
+          placeholder="Paste your schedule here!"
+        ></textarea>
+        <button onclick="createEventObjects()" class="btn">Submit</button>
+        <button id="authorize_button" style="display: none;" class="btn">
+          Authorize
+        </button>
+        <button id="signout_button" style="display: none;" class="btn">
+          Sign Out
+        </button>
+        <button onclick="exportEventsToGCalendar()" class="btn">Export!</button>
+        <pre id="content" style="white-space: pre-wrap;"></pre>
+      </section>
+    </div>
+  </body>
+  <script src="./scripts/scr.js"></script>
+  <script src="./scripts/auth.js"></script>
+  <script
+    async
+    defer
+    src="https://apis.google.com/js/api.js"
+    onload="this.onload=function(){};handleClientLoad()"
+    onreadystatechange="if (this.readyState === 'complete') this.onload()"
+  ></script>
+</html>
