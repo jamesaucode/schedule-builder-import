@@ -21,6 +21,12 @@
       href="https://fonts.googleapis.com/css?family=Roboto:400,500,700"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
     <title>UCD Schedule Builder Helper</title>
   </head>
   <body>
@@ -28,7 +34,10 @@
       <h1 class="heading">Schedule Builder to Google Calendar Helper</h1>
       <section class="tutorial" id="tutorial">
         <h2 class="heading--sub">
-          1. Go to <a class="link" target="_blank" href="https://my.ucdavis.edu/">myucdavis</a>
+          1. Go to
+          <a class="link" target="_blank" href="https://my.ucdavis.edu/"
+            >myucdavis</a
+          >
         </h2>
         <h2 class="heading--sub">2. Login to you UC Davis account</h2>
         <h2 class="heading--sub">
@@ -46,16 +55,37 @@
             rows="20"
             cols="100"
             placeholder="Paste your schedule here!"
-			onblur="createEventObjects()"
+            onblur="createEventObjects()"
           ></textarea>
           <!-- <button onclick="createEventObjects()" class="btn">Submit</button> !-->
         </section>
-		<button class="btn" onclick="toggleListClick()">Preivew</button>
-		<div id="courses" class="hide">
-		</div>
-		<h2 class="heading--sub">5. Enter the first <strong>MONDAY</strong> of instruction. (yyyy-mm-dd)</h2>
-		<input class="datepick" onkeydown="handleChange(event)" onkeyup="handleChange(event)" onblur="handleChange(event)" placeholder="yyyy-mm-dd" type="text" id="datepick"/>
-		<h2 class="error" id="error">Invalid date</h2>
+        <button
+          id="preview"
+          class="btn btn--long hide"
+          onclick="toggleListClick()"
+        >
+          Preview
+          <i
+            id="arrow"
+            class="fas fa-sort-down"
+            style="vertical-align:middle"
+          ></i>
+        </button>
+        <div id="courses" class="hide"></div>
+        <h2 class="heading--sub">
+          5. Enter the first <strong>MONDAY</strong> of instruction.
+          (mm-dd)
+        </h2>
+        <input
+          class="datepick"
+          onkeydown="handleChange()"
+          onkeyup="handleChange()"
+          onblur="handleChange()"
+          placeholder="mm-dd"
+          type="text"
+          id="datepick"
+        />
+        <h2 class="error" id="error">Invalid date</h2>
         <h2 class="heading--sub">
           6. Click this button to login to your google account and authorize
           this website.
@@ -70,11 +100,11 @@
           7. Finally , click this button to import everything to your google
           calendar!
           <button onclick="exportEventsToGCalendar()" class="btn">
-            Export!
+            Import!
           </button>
-		  <!--<button onclick="createEventObjects()" class="btn">Testing</button>!-->
+          <!--<button onclick="createEventObjects()" class="btn">Testing</button>!-->
         </h2>
-          <pre id="content" style="white-space: pre-wrap;"></pre>
+        <pre id="content" style="white-space: pre-wrap;"></pre>
       </section>
     </div>
   </body>

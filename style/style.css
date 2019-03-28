@@ -24,7 +24,17 @@ pre {
   background: #6ea2ff;
   color: white;
   width: 100px;
+  text-transform: uppercase;
   font-weight: 500;
+  box-shadow: 4px 4px 8px rgba(0,0,0,0.15);
+}
+.btn--long {
+	display: flex;
+	flex-direction: column;
+	margin: 0 auto;
+	padding: 5px;
+	font-size: 12px;
+	border-radius: 3px;
 }
 .btn:hover {
   background: #2074f9;
@@ -62,12 +72,15 @@ pre {
 }
 .listItem {
 	font-family: "Roboto", arial, sans-serif;
-	padding: 10px;
+	padding: 20px;
 	font-weight: 700;
 	background: #091184;
 	border-radius: 3px;
-	color: #c6b600;
+	color: #f2ea00;
 	margin: 10px 0;
+}
+.listItem > p {
+	padding: 5px;
 }
 .wrapper {
   display: flex;
@@ -89,6 +102,7 @@ pre {
   font-weight: 400;
   font-size: 24px;
   padding: 10px;
+  color: rgba(0,0,0,0.75);
 }
 .image {
   width: 100%;

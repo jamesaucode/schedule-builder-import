@@ -1,8 +1,14 @@
 'use strict';
-var currentDateObject = new Date();
-var currentYear = currentDateObject.getFullYear().toString();
-var defaultTimeZone = 'America/Los_Angeles';
-var monthDict = {
+window.onload = function () {
+    handleChange();
+    createEventObjects();
+};
+/***********************/
+/* constants */
+var CURRENTDATEOBJECT = new Date();
+var CURRENTYEAR = CURRENTDATEOBJECT.getFullYear().toString();
+var DEFAULTTIMEZONE = 'America/Los_Angeles';
+var MONTHDICT = {
     Jan: '01',
     Feb: '02',
     Mar: '03',
@@ -16,26 +22,28 @@ var monthDict = {
     Nov: '11',
     Dec: '12'
 };
-var dateDict = { M: 'MO,', T: 'TU,', W: 'WE,', R: 'TH,', F: 'FR,' };
-var dateIntDict = { T: 1, W: 2, R: 3, F: 4 };
+var DATEDICT = { M: 'MO,', T: 'TU,', W: 'WE,', R: 'TH,', F: 'FR,' };
+var DATEINTDICT = { T: 1, W: 2, R: 3, F: 4 };
+/**************/
 var getFinalExamMatches = function (stripped) {
     var fReg = /Final\sExam:\s(\D{3})\.\s(\D{3})\.(\d{1,2})\sat\s(\d{1,2}:\d{1,2})(am|pm)/gm;
     var match = fReg.exec(stripped);
     return match;
 };
 var makeFinalExamEvent = function (courseName, parsedFinalExam) {
-    var finalExamEvent = new Object();
-    finalExamEvent['start'] = new Object();
-    finalExamEvent['end'] = new Object();
+    var finalExamEvent = {
+        start: {},
+        end: {}
+    };
     finalExamEvent['start']['dateTime'] = getFinalExamDates(parsedFinalExam)[0];
     finalExamEvent['end']['dateTime'] = getFinalExamDates(parsedFinalExam)[1];
-    finalExamEvent['start']['timeZone'] = 'America/Los_Angeles';
-    finalExamEvent['end']['timeZone'] = 'America/Los_Angeles';
+    finalExamEvent['start']['timeZone'] = DEFAULTTIMEZONE;
+    finalExamEvent['end']['timeZone'] = DEFAULTTIMEZONE;
     finalExamEvent['summary'] = courseName + ' (Final)';
     return finalExamEvent;
 };
 var findFirstFinal = function (strippedArray) {
-    var earliestFinal = "999999999";
+    var earliestFinal = '999999999';
     for (var i = 0; i < strippedArray.length; i++) {
         var finalExam = getFinalExamMatches(strippedArray[i]);
         var finalExamStartDate = getFinalExamDates(finalExam)[0].slice(0, 10);
@@ -46,11 +54,17 @@ var findFirstFinal = function (strippedArray) {
     }
     return earliestFinal;
 };
-var handleChange = function (event) {
-    var errorNode = document.getElementById('error');
+var validateDate = function () {
+    var re = /^\d{2}\-\d{2}$/;
     var datePickNode = document.getElementById('datepick');
-    var re = /^\d{4}\-\d{2}\-\d{2}$/;
     if (datePickNode.value.match(re) || datePickNode.value.length === 0) {
+        return true;
+    }
+    return false;
+};
+var handleChange = function () {
+    var errorNode = document.getElementById('error');
+    if (validateDate() === true) {
         errorNode.style.display = 'none';
     }
     else {
@@ -58,18 +72,19 @@ var handleChange = function (event) {
     }
 };
 var createEventObjects = function () {
-    var scheduleNode = document.getElementById('schedule');
+    var scheduleNode = (document.getElementById('schedule'));
     // replace all new lines character to space
     var stripped = scheduleNode.value.replace(/(\r\n|\n|\r)/gm, ' ');
     // First date of spring instruction
-    var datePickNode = document.getElementById('datepick');
-    var userInputDate = datePickNode.value.toString();
+    var datePickNode = (document.getElementById('datepick'));
+    var userInputDate = CURRENTYEAR + '-' + datePickNode.value.toString();
     var strippedArray = stripped.split('...');
     // There will be an empty item at the end of the array, we want to pop it
     strippedArray.pop();
     // We use the earliest final date to determine when instruction ends
     var earliestFinal = findFirstFinal(strippedArray);
-    var finalEventsArray = [];
+    var eventsArray = [];
+    var examsArray = [];
     for (var i = 0; i < strippedArray.length; i++) {
         var courseName = getCourseNames(strippedArray[i]);
         var combinedCourseName = courseName[1] + courseName[2] + courseName[3];
@@ -77,49 +92,75 @@ var createEventObjects = function () {
         var finalExam = getFinalExamMatches(strippedArray[i]);
         var finalExamEvent = makeFinalExamEvent(combinedCourseName, finalExam);
         var untilDate = earliestFinal;
-        finalEventsArray.push(finalExamEvent);
-        var e = void 0;
+        examsArray.push(finalExamEvent);
         // 1 item if there's no discussion, else there is discussion.
         for (var j = 0; j < time.length; j++) {
-            e = new Object();
-            e['start'] = new Object();
-            e['end'] = new Object();
-            e['recurrence'] = new Array();
-            if (j == 0) {
-                e['summary'] = combinedCourseName + ' (Lec)';
+            var event_1 = { start: {}, end: {} };
+            event_1['recurrence'] = new Array();
+            if (j === 0) {
+                event_1['summary'] = combinedCourseName + ' (Lecture)';
             }
             else {
-                e['summary'] = combinedCourseName + ' (Dis)';
+                event_1['summary'] = combinedCourseName + ' (Discussion)';
             }
             var startTime = formatTime(userInputDate, time[j][2], time[j][4], time[j][1]);
             var endTime = formatTime(userInputDate, time[j][3], time[j][4], time[j][1]);
             var location_1 = time[j][5];
-            e['start']['dateTime'] = startTime;
-            e['end']['dateTime'] = endTime;
-            e['start']['timeZone'] = defaultTimeZone;
-            e['end']['timeZone'] = defaultTimeZone;
-            e['recurrence'].push(getReaccurence(untilDate, time[j][1]));
-            e['location'] = location_1;
-            finalEventsArray.push(e);
+            event_1['start']['dateTime'] = startTime;
+            event_1['end']['dateTime'] = endTime;
+            event_1['start']['timeZone'] = DEFAULTTIMEZONE;
+            event_1['end']['timeZone'] = DEFAULTTIMEZONE;
+            event_1['recurrence'].push(getReaccurence(untilDate, time[j][1]));
+            event_1['location'] = location_1;
+            eventsArray.push(event_1);
         }
     }
-    appendListItem(finalEventsArray);
-    console.log(finalEventsArray);
-    return finalEventsArray;
+    appendListItem(eventsArray, examsArray);
+    if (eventsArray.length > 0) {
+        showPreviewButton();
+    }
+    else {
+        hidePreviewButton();
+    }
+    return { eventsArray: eventsArray, examsArray: examsArray };
 };
-var appendListItem = function (finalEventsArray) {
+var showPreviewButton = function () {
+    var buttonNode = document.getElementById('preview');
+    buttonNode.classList.remove('hide');
+};
+var hidePreviewButton = function () {
+    var buttonNode = document.getElementById('preview');
+    buttonNode.classList.add('hide');
+};
+var appendListItem = function (eventsArray, examsArray) {
     var coursesNode = document.getElementById('courses');
+    // Clear previous appended text
     removeAllChild(coursesNode);
-    if (finalEventsArray.length > 0) {
-        for (var i = 0; i < finalEventsArray.length; i++) {
-            var listItem = document.createElement('p');
+    if (eventsArray.length > 0) {
+        for (var i = 0; i < eventsArray.length; i++) {
+            var listItem = document.createElement('div');
+            var message = eventsArray[i].summary;
+            var location_2 = eventsArray[i].location;
+            var date = ' Every : ' + eventsArray[i].recurrence[0].match(/BYDAY=(\D+)/)[1];
             listItem.classList.add('listItem');
-            appendText(i + 1 + ' . ' + finalEventsArray[i].summary + '\n', listItem);
+            appendText(message, listItem);
+            appendText(date, listItem);
+            appendText(location_2, listItem);
             coursesNode.appendChild(listItem);
         }
     }
-    else {
-        appendText("Nothing to show!", coursesNode);
+    if (examsArray.length > 0) {
+        for (var i = 0; i < examsArray.length; i++) {
+            var listItem = document.createElement('div');
+            var message = examsArray[i].summary;
+            var date = examsArray[i].start.dateTime.replace("T", " ") +
+                ' - ' +
+                examsArray[i].end.dateTime.replace("T", " ");
+            listItem.classList.add('listItem');
+            appendText(message, listItem);
+            appendText(date, listItem);
+            coursesNode.appendChild(listItem);
+        }
     }
 };
 var removeAllChild = function (node) {
@@ -128,16 +169,27 @@ var removeAllChild = function (node) {
     }
 };
 var appendText = function (message, parentNode) {
-    var textContent = document.createTextNode(message);
+    var textContent = document.createElement('p');
+    var text = document.createTextNode(message);
+    textContent.appendChild(text);
     parentNode.appendChild(textContent);
 };
 var toggleListClick = function () {
     var coursesNode = document.getElementById('courses');
+    var arrowNode = document.getElementById('arrow');
     if (coursesNode.classList.contains('hide')) {
         coursesNode.classList.remove('hide');
     }
     else {
         coursesNode.classList.add('hide');
+    }
+    if (arrowNode.classList.contains('fa-sort-down')) {
+        arrowNode.classList.remove('fa-sort-down');
+        arrowNode.classList.add('fa-sort-up');
+    }
+    else {
+        arrowNode.classList.remove('fa-sort-up');
+        arrowNode.classList.add('fa-sort-down');
     }
 };
 var getReaccurence = function (untilDate, dates) {
@@ -154,7 +206,7 @@ var getReaccurence = function (untilDate, dates) {
     }
     until += lastmonth + lastdayString;
     datesArray.forEach(function (date) {
-        byday += dateDict[date];
+        byday += DATEDICT[date];
     });
     rrule = baseRule + until + ';' + byday;
     // Remove the last comma
@@ -162,15 +214,15 @@ var getReaccurence = function (untilDate, dates) {
     return rrule;
 };
 var getFinalExamDates = function (date) {
-    var formattedStartDate = currentYear;
-    var formattedEndDate = currentYear;
+    var formattedStartDate = CURRENTYEAR;
+    var formattedEndDate = CURRENTYEAR;
     var adjustedStartTimeInt = parseInt(date[4]);
     var adjustedEndTimeInt = parseInt(date[4]) + 2;
     var adjustedStartTime = adjustedStartTimeInt.toString() + date[4].slice(-3);
     var adjustedEndTime = adjustedEndTimeInt.toString() + date[4].slice(-3);
-    var finalDatesInArray = new Array();
-    formattedStartDate += '-' + monthDict[date[2]];
-    formattedEndDate += '-' + monthDict[date[2]];
+    var finalDatesInArray = [];
+    formattedStartDate += '-' + MONTHDICT[date[2]];
+    formattedEndDate += '-' + MONTHDICT[date[2]];
     formattedStartDate += '-' + date[3];
     formattedEndDate += '-' + date[3];
     // google api requires double digit hh
@@ -196,7 +248,7 @@ var formatTime = function (userInputDate, time, amOrPm, recurrence) {
     var adjustedTimeInt = parseInt(time);
     var adjustedTime = adjustedTimeInt.toString() + time.slice(-3);
     // If h is single digit
-    if (time.length == 4) {
+    if (time.length === 4) {
         if (amOrPm === 'PM') {
             adjustedTimeInt += 12;
             adjustedTime = adjustedTimeInt.toString() + time.slice(-3);
@@ -205,7 +257,7 @@ var formatTime = function (userInputDate, time, amOrPm, recurrence) {
             adjustedTime = '0' + adjustedTime;
         }
     }
-    adjustedDateInt += dateIntDict[firstDate];
+    adjustedDateInt += DATEINTDICT[firstDate];
     if (adjustedDateInt < 10) {
         adjustedDate = '0' + adjustedDateInt.toString();
     }

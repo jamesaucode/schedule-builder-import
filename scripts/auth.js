@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = [
   'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
@@ -25,7 +25,6 @@ function handleClientLoad() {
 function initClient() {
   gapi.client
     .init({
-      // apiKey: config.API_KEY,
       clientId: config.CLIENT_ID,
       discoveryDocs: DISCOVERY_DOCS,
       scope: SCOPES,
@@ -87,48 +86,34 @@ function appendPre(message) {
   pre.appendChild(textContent);
 }
 function exportEventsToGCalendar() {
-  const parsedEventArray = createEventObjects();
-  for (let i in parsedEventArray) {
+  const {eventsArray, examsArray} = createEventObjects();
+  console.log(eventsArray);
+  console.log(examsArray);
+  eventsArray.forEach(event => {
     let request = gapi.client.calendar.events.insert({
       calendarId: 'primary',
-      resource: parsedEventArray[i],
+      resource: event,
     });
     request.execute(event => {
       appendPre('Event created: ' + event.summary);
     });
-  }
+  });
+  examsArray.forEach(exam => {
+    let request = gapi.client.calendar.events.insert({
+      calendarId: 'primary',
+      resource: exam,
+    });
+    request.execute(event => {
+      appendPre('Event created: ' + event.summary);
+    });
+  });
+  //for (let i in parsedEventArray) {
+  //  let request = gapi.client.calendar.events.insert({
+  //    calendarId: 'primary',
+  //    resource: parsedEventArray[i],
+  //  });
+  //  request.execute(event => {
+  //    appendPre('Event created: ' + event.summary);
+  //  });
+  //}
 }
-
-/**
- * Print the summary and start datetime/date of the next ten events in
- * the authorized user's calendar. If no events are found an
- * appropriate message is printed.
- */
-//function listUpcomingEvents() {
-//  gapi.client.calendar.events
-//    .list({
-//      calendarId: 'primary',
-//      timeMin: new Date().toISOString(),
-//      showDeleted: false,
-//      singleEvents: true,
-//      maxResults: 10,
-//      orderBy: 'startTime',
-//    })
-//    .then(function(response) {
-//      var events = response.result.items;
-//      appendPre('Upcoming events:');
-//
-//      if (events.length > 0) {
-//        for (let i = 0; i < events.length; i++) {
-//          var event = events[i];
-//          var when = event.start.dateTime;
-//          if (!when) {
-//            when = event.start.date;
-//          }
-//          appendPre(event.summary + ' (' + when + ')');
-//        }
-//      } else {
-//        appendPre('No upcoming events found.');
-//      }
-//    });
-//}
