@@ -46,10 +46,12 @@ var findFirstFinal = function (strippedArray) {
     var earliestFinal = '999999999';
     for (var i = 0; i < strippedArray.length; i++) {
         var finalExam = getFinalExamMatches(strippedArray[i]);
-        var finalExamStartDate = getFinalExamDates(finalExam)[0].slice(0, 10);
-        var untilDate = finalExamStartDate.replace(/-/g, '');
-        if (untilDate < earliestFinal) {
-            earliestFinal = untilDate;
+        if (finalExam !== null) {
+            var finalExamStartDate = getFinalExamDates(finalExam)[0].slice(0, 10);
+            var untilDate = finalExamStartDate.replace(/-/g, '');
+            if (untilDate < earliestFinal) {
+                earliestFinal = untilDate;
+            }
         }
     }
     return earliestFinal;
@@ -90,9 +92,11 @@ var createEventObjects = function () {
         var combinedCourseName = courseName[1] + courseName[2] + courseName[3];
         var time = getTimes(strippedArray[i]);
         var finalExam = getFinalExamMatches(strippedArray[i]);
-        var finalExamEvent = makeFinalExamEvent(combinedCourseName, finalExam);
+        if (finalExam !== null) {
+            var finalExamEvent = makeFinalExamEvent(combinedCourseName, finalExam);
+            examsArray.push(finalExamEvent);
+        }
         var untilDate = earliestFinal;
-        examsArray.push(finalExamEvent);
         // 1 item if there's no discussion, else there is discussion.
         for (var j = 0; j < time.length; j++) {
             var event_1 = { start: {}, end: {} };
@@ -141,7 +145,8 @@ var appendListItem = function (eventsArray, examsArray) {
             var listItem = document.createElement('div');
             var message = eventsArray[i].summary;
             var location_2 = eventsArray[i].location;
-            var date = ' Every : ' + eventsArray[i].recurrence[0].match(/BYDAY=(\D+)/)[1];
+            var date = ' Every : ' +
+                eventsArray[i].recurrence[0].match(/BYDAY=(\D+)/)[1];
             listItem.classList.add('listItem');
             appendText(message, listItem);
             appendText(date, listItem);
@@ -153,9 +158,9 @@ var appendListItem = function (eventsArray, examsArray) {
         for (var i = 0; i < examsArray.length; i++) {
             var listItem = document.createElement('div');
             var message = examsArray[i].summary;
-            var date = examsArray[i].start.dateTime.replace("T", " ") +
+            var date = examsArray[i].start.dateTime.replace('T', ' ') +
                 ' - ' +
-                examsArray[i].end.dateTime.replace("T", " ");
+                examsArray[i].end.dateTime.replace('T', ' ');
             listItem.classList.add('listItem');
             appendText(message, listItem);
             appendText(date, listItem);
@@ -229,7 +234,8 @@ var getFinalExamDates = function (date) {
     if (date[4].length === 4) {
         if (date[5] === 'pm') {
             adjustedStartTimeInt += 12;
-            adjustedStartTime = adjustedStartTimeInt.toString() + date[4].slice(-3);
+            adjustedStartTime =
+                adjustedStartTimeInt.toString() + date[4].slice(-3);
             adjustedEndTimeInt += 12;
             adjustedEndTime = adjustedEndTimeInt.toString() + date[4].slice(-3);
         }
